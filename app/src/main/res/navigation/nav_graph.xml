@@ -11,9 +11,15 @@
         android:label="@string/menu_item_file_browser"
         tools:layout="@layout/fragment_recyclerview">
 
+        <argument
+            android:name="sectionId"
+            app:argType="string"
+            app:nullable="true" />
+
         <action
             android:id="@+id/action_fileBrowserPage_to_codeEditorPage"
             app:destination="@id/codeEditorPage" />
+
     </fragment>
 
     <fragment
@@ -21,9 +27,20 @@
         android:name="de.markusressel.mkdocseditor.view.fragment.CodeEditorFragment"
         android:label="@string/code_editor"
         tools:layout="@layout/fragment_editor">
+
         <argument
             android:name="documentId"
             app:argType="string" />
+        <argument
+            android:name="host"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="port"
+            android:defaultValue="-1"
+            app:argType="integer" />
+
     </fragment>
 
     <fragment

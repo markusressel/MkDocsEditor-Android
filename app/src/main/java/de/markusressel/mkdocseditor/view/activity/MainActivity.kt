@@ -49,15 +49,10 @@ class MainActivity : NavigationDrawerActivity() {
 
         if (Intent.ACTION_VIEW == appLinkAction && appLinkData != null) {
 
-//            val givenHost = (appLinkData.host ?: "")
-//            val configuredHost = preferencesHolder.restConnectionHostnamePreference.persistedValue
-//            if (!givenHost.startsWith(configuredHost)) {
-//                Timber.d { "Ignoring deep link from other host: $givenHost" }
-//                return
-//            }
-
             appLinkData.lastPathSegment?.let { documentId ->
-                val direction = FileBrowserFragmentDirections.actionFileBrowserPageToCodeEditorPage(documentId)
+                val direction = FileBrowserFragmentDirections
+                        .actionFileBrowserPageToCodeEditorPage(documentId, appLinkData.host)
+                        .setPort(appLinkData.port)
                 navController.navigate(direction)
             }
         }

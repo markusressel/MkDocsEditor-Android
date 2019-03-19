@@ -88,8 +88,24 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
     }
 
     private val documentId: String
+        get() = safeArgs.documentId
+
+    private val backendHostname: String
+        get() = safeArgs.host ?: preferencesHolder.restConnectionHostnamePreference.persistedValue
+
+    private val backendPort: Int
         get() {
-            return safeArgs.documentId
+            return if (safeArgs.port != -1) {
+                safeArgs.port
+            } else {
+                preferencesHolder.restConnectionPortPreference.persistedValue.toInt()
+            }
+        }
+
+    private val backendUsesSsl: Boolean
+        get() {
+            // TODO:
+            return preferencesHolder.restConnectionSslPreference.persistedValue
         }
 
     private var noConnectionSnackbar: Snackbar? = null
@@ -202,9 +218,9 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
 
         documentSyncManager = DocumentSyncManager(
                 context = context(),
-                hostname = preferencesHolder.restConnectionHostnamePreference.persistedValue,
-                port = preferencesHolder.restConnectionPortPreference.persistedValue.toInt(),
-                ssl = preferencesHolder.restConnectionSslPreference.persistedValue,
+                hostname = backendHostname,
+                port = backendPort,
+                ssl = backendUsesSsl,
                 basicAuthConfig = BasicAuthConfig(
                         preferencesHolder.basicAuthUserPreference.persistedValue,
                         preferencesHolder.basicAuthPasswordPreference.persistedValue),
@@ -260,7 +276,10 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
             }
         }
 
-        updateOfflineBanner()
+        runOnUiThread {
+            loadingComponent.showContent()
+            updateOfflineBanner()
+        }
     }
 
     private fun watchTextChanges() {
@@ -408,7 +427,7 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
             }
         }
 
-        loadingComponent.showContent(animated = true)
+        loadingComponent.showContent()
     }
 
     /**
@@ -546,7 +565,8 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
 
     private fun updateOfflineBanner() {
         runOnUiThread {
-            viewModel.offlineModeEnabled.value = !documentSyncManager.isConnected || offlineModeManager.isEnabled()
+            viewModel.offlineModeEnabled.value =
+                    !documentSyncManager.isConnected || offlineModeManager.isEnabled()
         }
     }
 

@@ -19,6 +19,17 @@ import java.util.*
 
 /**
  * Class used to manage document changes from client- and server.
+ *
+ * @param context application context
+ * @param hostname backend hostname
+ * @param port backend port
+ * @param ssl whether to use wss instead of ws
+ * @param basicAuthConfig basic auth
+ * @param documentId document id to sync
+ * @param onConnectionStatusChanged listener for connection status changes
+ * @param onInitialText called when the initial text is delivered
+ * @param onTextChanged called when the text is changed from server side
+ * @param currentText function to get the current client text
  */
 class DocumentSyncManager(
         val context: Context,

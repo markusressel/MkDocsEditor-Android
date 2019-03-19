@@ -157,7 +157,8 @@ class FileBrowserFragment : MultiPersistableListFragmentBase() {
         Timber.d { "Opening Document '$documentId'" }
 
         navController.navigate(
-                FileBrowserFragmentDirections.actionFileBrowserPageToCodeEditorPage(documentId)
+                FileBrowserFragmentDirections.actionFileBrowserPageToCodeEditorPage(documentId,
+                        null)
         )
     }
 
