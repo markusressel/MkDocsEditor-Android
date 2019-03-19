@@ -5,6 +5,7 @@
     <string name="code_editor">Code Editor</string>
 
     <string name="no_offline_version">Sorry, there is no offline version available. Try to connect to the server and open this file to get an updated offline version.</string>
+    <string name="document_not_found">The document was not found.</string>
 
     <string name="refresh">Refresh</string>
     <string name="open_in_browser">Open in browser</string>

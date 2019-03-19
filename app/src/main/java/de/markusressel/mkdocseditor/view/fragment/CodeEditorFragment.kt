@@ -164,8 +164,7 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
     }
 
     override fun initComponents(context: Context) {
-        super
-                .initComponents(context)
+        super.initComponents(context)
         loadingComponent
         optionsMenuComponent
     }
@@ -173,12 +172,16 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
     override fun createViewDataBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): ViewDataBinding? {
         val binding: FragmentEditorBinding = DataBindingUtil.inflate(layoutInflater, layoutRes, container, false)
         viewModel.getEntity(documentPersistenceManager, documentId).observe(this, Observer<List<DocumentEntity>> {
-            val entity = it.first()
-            viewModel.documentId.value = entity.id
+            if (it.isEmpty()) {
+                Timber.w { "No document with id '$documentId' was found in offline cache" }
+            } else {
+                val entity = it.first()
+                viewModel.documentId.value = entity.id
+            }
         })
 
         binding.let {
-            it.setLifecycleOwner(this)
+            it.lifecycleOwner = this
             it.viewModel = viewModel
         }
 

@@ -70,8 +70,8 @@ dependencies {
     implementation 'androidx.emoji:emoji:1.0.0'
     implementation 'androidx.emoji:emoji-bundled:1.0.0'
 
-    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-rc02"
-    implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-rc02"
+    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0"
+    implementation "android.arch.navigation:navigation-ui-ktx:1.0.0"
 
     // Android KTX
 
@@ -140,11 +140,13 @@ dependencies {
     // Code editor
 //    def codeEditorVersion = "v2.1.0"
     def codeEditorVersion = "dev-SNAPSHOT"
-    implementation("com.github.markusressel:KodeEditor:${codeEditorVersion}") { changing = true}
+    implementation("com.github.markusressel:KodeEditor:${codeEditorVersion}") { changing = true }
 
     // Syntax Highlighting
     def codeHighlighterVersion = "v1.2.2"
-    implementation("com.github.markusressel.KodeHighlighter:markdown:${codeHighlighterVersion}") { changing = true}
+    implementation("com.github.markusressel.KodeHighlighter:markdown:${codeHighlighterVersion}") {
+        changing = true
+    }
 
     // AboutLibraries ("About" screen)
     implementation("com.mikepenz:aboutlibraries:$aboutlibrariesVersion@aar") {
@@ -154,7 +156,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    implementation 'android.arch.navigation:navigation-fragment:1.0.0-rc02'
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0'
 }
 
 configurations.all() {
