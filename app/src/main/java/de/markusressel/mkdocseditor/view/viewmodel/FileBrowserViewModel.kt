@@ -9,10 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.github.ajalt.timberkt.Timber
+import de.markusressel.commons.android.core.doAsync
+import de.markusressel.commons.android.core.runOnUiThread
+import de.markusressel.mkdocseditor.data.persistence.DocumentPersistenceManager
 import de.markusressel.mkdocseditor.data.persistence.IdentifiableListItem
-import de.markusressel.mkdocseditor.data.persistence.base.PersistenceManagerBase
-import de.markusressel.mkdocseditor.data.persistence.entity.DocumentEntity
-import de.markusressel.mkdocseditor.data.persistence.entity.ResourceEntity
+import de.markusressel.mkdocseditor.data.persistence.ResourcePersistenceManager
+import de.markusressel.mkdocseditor.data.persistence.SectionPersistenceManager
 import de.markusressel.mkdocseditor.data.persistence.entity.SectionEntity
 import de.markusressel.mkdocseditor.data.persistence.entity.SectionEntity_
 import de.markusressel.mkdocseditor.view.fragment.SectionBackstackItem
@@ -30,16 +32,52 @@ class FileBrowserViewModel : EntityListViewModel() {
             }
             return field
         }
-    private val currentSearchFilter = MutableLiveData<String>()
 
-    var persistenceManager: PersistenceManagerBase<SectionEntity>? = null
+    val isSearchExpanded = MutableLiveData<Boolean>(false)
+    val currentSearchFilter = MutableLiveData<String>()
+
+    var sectionPersistenceManager: SectionPersistenceManager? = null
+    var documentPersistenceManager: DocumentPersistenceManager? = null
+    var resourcePersistenceManager: ResourcePersistenceManager? = null
+
+    val currentSearchResults = MutableLiveData<List<IdentifiableListItem>>()
 
     val currentSectionId = MutableLiveData<String>()
-
-    val currentSection = switchMapPaged<String, SectionEntity>(currentSectionId,
+    val currentSection = switchMapPaged<String, SectionEntity>(
+            currentSectionId,
             Function { sectionId ->
                 getSectionLiveData(sectionId)
-            })
+            }
+    )
+
+    init {
+        currentSearchFilter.observeForever { searchString ->
+            if (isSearching()) {
+                // TODO:  this is pretty ugly and time/performance consuming
+                doAsync {
+                    val searchRegex = searchString.toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.LITERAL))
+
+                    val sections = sectionPersistenceManager!!.standardOperation().query {
+                        filter { section -> searchRegex.containsMatchIn(section.name) }
+                    }.find()
+
+                    val documents = documentPersistenceManager!!.standardOperation().query {
+                        filter { document -> searchRegex.containsMatchIn(document.name) }
+                    }.find()
+
+                    val resources = resourcePersistenceManager!!.standardOperation().query {
+                        filter { resource -> searchRegex.containsMatchIn(resource.name) }
+                    }.find()
+
+                    runOnUiThread {
+                        currentSearchResults.value = sections + documents + resources
+                    }
+                }
+            } else {
+                showTopLevel()
+            }
+        }
+    }
 
     /**
      * Helper function to use switchMap with a PagedList
@@ -74,36 +112,16 @@ class FileBrowserViewModel : EntityListViewModel() {
      */
     private fun getSectionLiveData(sectionId: String = ROOT_SECTION_ID): LiveData<PagedList<SectionEntity>> {
         return LivePagedListBuilder(ObjectBoxDataSource.Factory(
-                persistenceManager!!.standardOperation().query {
+                sectionPersistenceManager!!.standardOperation().query {
                     equal(SectionEntity_.id, sectionId)
                     // TODO: implement sorting with inhomogeneous types
                     // sort(TYPE_COMPARATOR)
                 }),
+//                documentPersistenceManager!!.standardOperation().query {
+//
+//                }),
                 getPageSize()
         ).build()
-    }
-
-    /**
-     * Filters the given list by the currently active filter and sort options
-     */
-    private fun filterList(newData: List<IdentifiableListItem>): List<IdentifiableListItem> {
-        val filteredNewData = newData
-                .filter {
-                    itemContainsCurrentSearchString(it)
-                }
-                .toList()
-        return filteredNewData
-    }
-
-    private fun itemContainsCurrentSearchString(item: IdentifiableListItem): Boolean {
-        return when (currentSearchFilter.value) {
-            null -> true
-            "" -> true
-            else -> {
-                // TODO: search item content
-                true
-            }
-        }
     }
 
     /**
@@ -120,8 +138,8 @@ class FileBrowserViewModel : EntityListViewModel() {
      * @param addToBackstack true, when the section should be added to backstack, false otherwise
      */
     internal fun openSection(sectionId: String, addToBackstack: Boolean = true) {
-        if (currentSectionId.value == sectionId) {
-            // ignore if already set
+        if (!isSearching() && currentSectionId.value == sectionId) {
+            // ignore if no search is currently active and this section is already set
             return
         }
 
@@ -149,28 +167,42 @@ class FileBrowserViewModel : EntityListViewModel() {
         return true
     }
 
-    companion object {
+    /**
+     * @return true if a search is currently open, false otherwise
+     */
+    fun isSearching(): Boolean {
+        return currentSearchFilter.value?.isNotBlank() ?: false
+    }
 
+    /**
+     * Set the search string
+     *
+     * @return true if the value has changed, false otherwise
+     */
+    fun setSearch(text: String): Boolean {
+        return if (currentSearchFilter.value != text) {
+            currentSearchFilter.value = text
+            true
+        } else false
+    }
+
+    private fun clearSearch() {
+        setSearch("")
+        if (isSearchExpanded.value != false) {
+            isSearchExpanded.value = false
+        }
+    }
+
+    /**
+     * Show the top level preferences page
+     */
+    fun showTopLevel() {
+        currentSectionId.value = ROOT_SECTION_ID
+        openSection(ROOT_SECTION_ID)
+    }
+
+    companion object {
         /** ID of the tree root section */
         const val ROOT_SECTION_ID = "root"
-
-        private val TYPE_COMPARATOR = Comparator<IdentifiableListItem> { a, b ->
-            val typePrioA = when (a) {
-                is SectionEntity -> 0
-                is DocumentEntity -> 1
-                is ResourceEntity -> 2
-                else -> throw IllegalArgumentException("Cant compare object of type ${a.javaClass}!")
-            }
-
-            val typePrioB = when (b) {
-                is SectionEntity -> 0
-                is DocumentEntity -> 1
-                is ResourceEntity -> 2
-                else -> throw IllegalArgumentException("Cant compare object of type ${b.javaClass}!")
-            }
-
-            typePrioA
-                    .compareTo(typePrioB)
-        }
     }
 }

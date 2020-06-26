@@ -1,7 +1,7 @@
 package de.markusressel.mkdocseditor.navigation
 
 import com.github.ajalt.timberkt.Timber
-import com.mikepenz.material_design_iconic_typeface_library.MaterialDesignIconic
+import com.mikepenz.iconics.typeface.library.materialdesigniconic.MaterialDesignIconic
 import de.markusressel.mkdocseditor.R
 
 /**

@@ -18,7 +18,6 @@
 
 package de.markusressel.mkdocseditor.view.fragment.base
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,10 +26,6 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.AndroidSupportInjection
-import dagger.android.support.HasSupportFragmentInjector
 import de.markusressel.mkdocseditor.R
 import de.markusressel.mkdocseditor.view.IconHandler
 import javax.inject.Inject
@@ -41,21 +36,7 @@ import javax.inject.Inject
  *
  * Created by Markus on 07.01.2018.
  */
-abstract class DaggerSupportFragmentBase : LifecycleFragmentBase(), HasSupportFragmentInjector {
-
-    @Inject
-    lateinit var childFragmentInjector: DispatchingAndroidInjector<androidx.fragment.app.Fragment>
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection
-                .inject(this)
-        super
-                .onAttach(context)
-    }
-
-    override fun supportFragmentInjector(): AndroidInjector<androidx.fragment.app.Fragment> {
-        return childFragmentInjector
-    }
+abstract class DaggerSupportFragmentBase : LifecycleFragmentBase() {
 
     @Inject
     protected lateinit var iconHandler: IconHandler
@@ -75,12 +56,8 @@ abstract class DaggerSupportFragmentBase : LifecycleFragmentBase(), HasSupportFr
             viewModel.root
         } else {
             val newContainer = inflater.inflate(layoutRes, container, false) as ViewGroup
-
-            val alternative = super
-                    .onCreateView(inflater, newContainer, savedInstanceState)
-
-            alternative
-                    ?: newContainer
+            val alternative = super.onCreateView(inflater, newContainer, savedInstanceState)
+            alternative ?: newContainer
         }
     }
 

@@ -16,7 +16,7 @@ import io.reactivex.Single
  *
  * Created by Markus on 03.06.2018.
  */
-class MkDocsRestClient(
+class MkDocsRestClient constructor(
         private val requestManager: RequestManager = RequestManager(),
         sectionApi: SectionApi = SectionApiImpl(requestManager),
         documentApi: DocumentApi = DocumentApiImpl(requestManager),

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeLight" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -23,6 +23,8 @@
 
         <item name="listItem_dividerColor">@color/listItem_dividerColorLight</item>
 
+        <item name="speedDialOverlayColor">#55ffffff</item>
+
         <!-- KodeEditor -->
         <item name="ke_editor_backgroundColor">@color/editor_backgroundLight</item>
         <item name="ke_lineNumbers_backgroundColor">@color/editor_lineNumbers_backgroundLight
@@ -32,33 +34,19 @@
 
         <!--About Libraries-->
         <!--<item name="about_libraries_window_background">@color/windowBackgroundColorInverse</item>-->
-        <item name="about_libraries_card">@color/cardview_backgroundInverse</item>
-        <item name="about_libraries_title_description">@color/textColorPrimaryInverse</item>
-        <item name="about_libraries_title_openSource">@color/textColorPrimaryInverse</item>
-        <item name="about_libraries_text_openSource">@color/textColorSecondaryInverse</item>
-        <item name="about_libraries_special_button_openSource">
-            @color/about_libraries_special_button_openSource
-        </item>
-        <item name="about_libraries_dividerDark_openSource">
-            @color/about_libraries_dividerDark_openSource
-        </item>
-        <item name="about_libraries_dividerLight_openSource">
-            @color/about_libraries_dividerLight_openSource
-        </item>
+        <!--        <item name="aboutLibrariesWindowBackground">?android:colorBackground</item>-->
+        <!--        <item name="aboutLibrariesCardBackground">@color/cardview_backgroundInverse</item>-->
+        <!--        <item name="aboutLibrariesDescriptionTitle">@color/textColorPrimaryInverse</item>-->
+        <!--        <item name="aboutLibrariesDescriptionText">?android:textColorSecondary</item>-->
+        <!--        <item name="aboutLibrariesDescriptionDivider">@color/opensource_divider</item>-->
+        <!--        <item name="aboutLibrariesOpenSourceTitle">@color/textColorPrimaryInverse</item>-->
+        <!--        <item name="aboutLibrariesOpenSourceText">@color/textColorSecondaryInverse</item>-->
+        <!--        <item name="aboutLibrariesSpecialButtonText">@color/about_libraries_special_button_openSource</item>-->
+        <!--        <item name="aboutLibrariesOpenSourceDivider">@color/opensource_divider</item>-->
 
-
-        <!-- MaterialDrawer specific valueDescriptions -->
-        <item name="material_drawer_background">@color/material_drawer_background</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
-        <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
-        <item name="material_drawer_divider">@color/material_drawer_divider</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected</item>
-        <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_header_selection_text
-        </item>
+        <!-- MaterialDrawer specific values -->
+        <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyle</item>
+        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle</item>
 
         <!-- KutePreferences -->
         <item name="kute_preferences__menu__icon_color">#fff</item>
@@ -76,7 +64,7 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppThemeDark" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -97,6 +85,8 @@
 
         <item name="listItem_dividerColor">@color/listItem_dividerColorDark</item>
 
+        <item name="speedDialOverlayColor">#55000000</item>
+
         <!-- KodeEditor -->
         <item name="ke_editor_backgroundColor">@color/editor_backgroundDark</item>
         <item name="ke_lineNumbers_backgroundColor">@color/editor_lineNumbers_backgroundDark</item>
@@ -105,33 +95,21 @@
 
         <!-- About Libraries -->
         <!--<item name="about_libraries_window_background">@color/windowBackgroundColor</item>-->
-        <item name="about_libraries_card">@color/cardview_dark_background</item>
-        <item name="about_libraries_title_description">@color/textColorPrimary</item>
-        <item name="about_libraries_title_openSource">@color/textColorPrimary</item>
-        <item name="about_libraries_text_openSource">@color/textColorSecondary</item>
-        <!--<item name="about_libraries_special_button_openSource">-->
-        <!--@color/about_libraries_special_button_openSource-->
-        <!--</item>-->
-        <!--<item name="about_libraries_dividerDark_openSource">-->
-        <!--@color/about_libraries_dividerDark_openSource-->
-        <!--</item>-->
-        <!--<item name="about_libraries_dividerLight_openSource">-->
-        <!--@color/about_libraries_dividerLight_openSource-->
-        <!--</item>-->
 
-        <!-- MaterialDrawer specific valueDescriptions -->
-        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
-        </item>
-        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
-        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
-        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
-        <item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_dark_header_selection_text
-        </item>
+        <!--        <item name="aboutLibrariesWindowBackground">?android:colorBackground</item>-->
+        <!--        <item name="aboutLibrariesCardBackground">@color/cardview_dark_background</item>-->
+        <!--        <item name="aboutLibrariesDescriptionTitle">?android:textColorPrimary</item>-->
+        <!--        <item name="aboutLibrariesDescriptionText">?android:textColorSecondary</item>-->
+        <!--        <item name="aboutLibrariesDescriptionDivider">@color/opensource_divider</item>-->
+        <!--        <item name="aboutLibrariesOpenSourceTitle">?android:textColorPrimary</item>-->
+        <!--        <item name="aboutLibrariesOpenSourceText">?android:textColorSecondary</item>-->
+        <!--        <item name="aboutLibrariesSpecialButtonText">?android:textColorPrimary</item>-->
+        <!--        <item name="aboutLibrariesOpenSourceDivider">@color/opensource_divider</item>-->
+
+        <!--  MaterialDrawer -->
+        <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyle</item>
+        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle</item>
+
 
         <!-- KutePreferences -->
         <item name="kute_preferences__menu__icon_color">#fff</item>

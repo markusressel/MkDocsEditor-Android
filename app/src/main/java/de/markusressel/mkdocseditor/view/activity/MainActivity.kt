@@ -9,10 +9,12 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import dagger.hilt.android.AndroidEntryPoint
 import de.markusressel.mkdocseditor.BuildConfig
 import de.markusressel.mkdocseditor.view.activity.base.NavigationDrawerActivity
 import de.markusressel.mkdocseditor.view.fragment.FileBrowserFragmentDirections
 
+@AndroidEntryPoint
 class MainActivity : NavigationDrawerActivity() {
 
     override val style: Int

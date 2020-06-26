@@ -8,6 +8,10 @@
         <attr name="listItem_dividerColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="speeddialoverlay">
+        <attr name="speedDialOverlayColor" format="color" />
+    </declare-styleable>
+
     <style name="sub_header_content_textview">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

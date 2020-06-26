@@ -18,16 +18,17 @@ import com.github.ajalt.timberkt.Timber
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
-import com.mikepenz.material_design_iconic_typeface_library.MaterialDesignIconic
+import com.mikepenz.iconics.typeface.library.materialdesigniconic.MaterialDesignIconic
 import com.otaliastudios.zoom.ZoomEngine
 import com.trello.rxlifecycle2.LifecycleProvider
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import de.markusressel.commons.android.core.runOnUiThread
 import de.markusressel.commons.android.material.snack
 import de.markusressel.kodeeditor.library.view.CodeEditorLayout
 import de.markusressel.kodeeditor.library.view.SelectionChangedListener
-import de.markusressel.kodehighlighter.language.markdown.MarkdownSyntaxHighlighter
+import de.markusressel.kodehighlighter.language.markdown.MarkdownRuleBook
 import de.markusressel.mkdocseditor.R
 import de.markusressel.mkdocseditor.data.persistence.DocumentContentPersistenceManager
 import de.markusressel.mkdocseditor.data.persistence.DocumentPersistenceManager
@@ -61,6 +62,7 @@ import javax.inject.Inject
 /**
  * Created by Markus on 07.01.2018.
  */
+@AndroidEntryPoint
 class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener {
 
     override val layoutRes: Int
@@ -318,7 +320,7 @@ class CodeEditorFragment : DaggerSupportFragmentBase(), SelectionChangedListener
         super.onViewCreated(view, savedInstanceState)
 
         codeEditorLayout = view.findViewById(R.id.codeEditorView)
-        codeEditorLayout.syntaxHighlighter = MarkdownSyntaxHighlighter()
+        codeEditorLayout.languageRuleBook = MarkdownRuleBook()
         codeEditorLayout.codeEditorView.engine.addListener(object : ZoomEngine.Listener {
             override fun onIdle(engine: ZoomEngine) {
                 saveEditorState()

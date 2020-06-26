@@ -11,20 +11,20 @@
     <color name="textColorSecondaryInverse">#8A000000</color>
     <color name="textColorInactive">#FFFFFFFF</color>
 
-    <color name="cardview_background">@color/color_gray_800</color>
-    <color name="cardview_backgroundInverse">@color/color_gray_100</color>
+    <color name="cardview_background">@color/md_grey_800</color>
+    <color name="cardview_backgroundInverse">@color/md_grey_100</color>
 
     <!-- Preferences -->
-    <color name="preference_item__default_icon_colorDark">@color/color_gray_100</color>
-    <color name="preference_item__default_icon_colorLight">@color/color_gray_900</color>
+    <color name="preference_item__default_icon_colorDark">@color/md_grey_100</color>
+    <color name="preference_item__default_icon_colorLight">@color/md_grey_900</color>
 
 
     <!-- KodeEditor -->
-    <color name="editor_backgroundDark">@color/color_gray_900</color>
-    <color name="editor_lineNumbers_backgroundDark">@color/color_gray_850</color>
+    <color name="editor_backgroundDark">@color/md_grey_900</color>
+    <color name="editor_lineNumbers_backgroundDark">@color/md_grey_850</color>
 
     <color name="editor_backgroundLight">@color/md_white_1000</color>
-    <color name="editor_lineNumbers_backgroundLight">@color/color_gray_200</color>
+    <color name="editor_lineNumbers_backgroundLight">@color/md_grey_200</color>
 
     <!-- MkDocs Editor -->
     <color name="sectionBackgroundColor">@color/md_blue_700</color>
@@ -33,12 +33,12 @@
     <color name="documentBackgroundColor">@color/colorPrimary</color>
     <color name="documentBackgroundColorInverse">@color/colorPrimary</color>
 
-    <color name="documentOfflineAvailableColor">@color/color_gray_200</color>
+    <color name="documentOfflineAvailableColor">@color/md_grey_200</color>
 
     <color name="resourceBackgroundColor">@color/md_grey_800</color>
     <color name="resourceBackgroundColorInverse">@color/md_grey_200</color>
 
-    <color name="listItem_dividerColorLight">@color/color_gray_300</color>
-    <color name="listItem_dividerColorDark">@color/color_gray_700</color>
+    <color name="listItem_dividerColorLight">@color/md_grey_300</color>
+    <color name="listItem_dividerColorDark">@color/md_grey_700</color>
 
 </resources>

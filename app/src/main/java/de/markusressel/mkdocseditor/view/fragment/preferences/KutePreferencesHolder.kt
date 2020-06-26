@@ -2,7 +2,7 @@ package de.markusressel.mkdocseditor.view.fragment.preferences
 
 import android.content.Context
 import com.eightbitlab.rxbus.Bus
-import com.mikepenz.material_design_iconic_typeface_library.MaterialDesignIconic
+import com.mikepenz.iconics.typeface.library.materialdesigniconic.MaterialDesignIconic
 import de.markusressel.commons.android.material.toast
 import de.markusressel.kutepreferences.core.persistence.KutePreferenceDataProvider
 import de.markusressel.kutepreferences.core.preference.action.KuteAction
@@ -102,10 +102,10 @@ class KutePreferencesHolder @Inject constructor(
                 title = context.getString(R.string.clear_offline_cache_title),
                 description = "",
                 onClickAction = { context, _ ->
-                    sectionPersistenceManager.standardOperation().removeAll()
-                    documentPersistenceManager.standardOperation().removeAll()
                     documentContentPersistenceManager.standardOperation().removeAll()
                     resourcePersistenceManager.standardOperation().removeAll()
+                    documentPersistenceManager.standardOperation().removeAll()
+                    sectionPersistenceManager.standardOperation().removeAll()
                     context.toast("DB cleared")
                 })
     }
@@ -133,6 +133,7 @@ class KutePreferencesHolder @Inject constructor(
                 maximum = 65535,
                 dataProvider = dataProvider,
                 onPreferenceChangedListener = { old, new ->
+                    Bus.send(PortChangedEvent(new.toInt()))
                 })
     }
 

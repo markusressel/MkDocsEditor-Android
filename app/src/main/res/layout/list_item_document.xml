@@ -62,7 +62,8 @@
 
                 <TextView
                     style="@style/sub_header_content_textview"
-                    android:text="@{Long.toString(item.filesize)}" />
+                    android:text="@{item.formattedDocumentSize(context)}"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 

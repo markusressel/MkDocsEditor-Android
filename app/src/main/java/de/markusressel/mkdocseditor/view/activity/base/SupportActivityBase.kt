@@ -6,12 +6,6 @@ import android.view.WindowManager
 import androidx.annotation.CallSuper
 import androidx.annotation.IntDef
 import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasFragmentInjector
-import dagger.android.support.HasSupportFragmentInjector
 import de.markusressel.kutepreferences.core.persistence.KutePreferenceDataProvider
 import de.markusressel.mkdocseditor.R
 import de.markusressel.mkdocseditor.view.IconHandler
@@ -26,12 +20,7 @@ import javax.inject.Inject
 /**
  * Created by Markus on 20.12.2017.
  */
-abstract class DaggerSupportActivityBase : LifecycleActivityBase(), HasFragmentInjector, HasSupportFragmentInjector {
-
-    @Inject
-    internal lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
-    @Inject
-    internal lateinit var frameworkFragmentInjector: DispatchingAndroidInjector<android.app.Fragment>
+abstract class SupportActivityBase : LifecycleActivityBase() {
 
     @Inject
     lateinit var iconHandler: IconHandler
@@ -55,23 +44,13 @@ abstract class DaggerSupportActivityBase : LifecycleActivityBase(), HasFragmentI
     protected abstract val style: Int
 
     /**
-     * The layout ressource for this Activity
+     * The layout resource for this Activity
      */
     @get:LayoutRes
     protected abstract val layoutRes: Int
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
-        return supportFragmentInjector
-    }
-
-    override fun fragmentInjector(): AndroidInjector<android.app.Fragment>? {
-        return frameworkFragmentInjector
-    }
-
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
-
         // apply forced locale (if set in developer options)
         //        initLocale()
 
@@ -100,8 +79,8 @@ abstract class DaggerSupportActivityBase : LifecycleActivityBase(), HasFragmentI
         val contentView = layoutInflater.inflate(layoutRes, null)
         setContentView(contentView)
 
-        setSupportActionBar(toolbar)
 
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

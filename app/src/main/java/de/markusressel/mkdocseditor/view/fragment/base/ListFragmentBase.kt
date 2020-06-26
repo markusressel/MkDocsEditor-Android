@@ -17,23 +17,14 @@
 
 package de.markusressel.mkdocseditor.view.fragment.base
 
-import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.CallSuper
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.airbnb.epoxy.Typed3EpoxyController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.jakewharton.rxbinding2.view.RxView
-import com.trello.rxlifecycle2.kotlin.bindToLifecycle
-import de.markusressel.commons.android.core.dpToPx
+import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.mikepenz.iconics.typeface.library.materialdesigniconic.MaterialDesignIconic
 import de.markusressel.mkdocseditor.R
 import de.markusressel.mkdocseditor.data.persistence.entity.DocumentEntity
 import de.markusressel.mkdocseditor.data.persistence.entity.ResourceEntity
@@ -45,7 +36,7 @@ import kotlinx.android.synthetic.main.layout_empty_list.*
 /**
  * List base class
  */
-abstract class NewListFragmentBase : DaggerSupportFragmentBase() {
+abstract class ListFragmentBase : DaggerSupportFragmentBase() {
 
     override val layoutRes: Int
         get() = R.layout.fragment_recyclerview
@@ -122,93 +113,28 @@ abstract class NewListFragmentBase : DaggerSupportFragmentBase() {
     }
 
     private fun setupFabs() {
-        fabConfig.left.addAll(getLeftFabs())
-        fabConfig.right.addAll(getRightFabs())
+        speedDial.apply {
+            setMainFabClosedDrawable(iconHandler.getFabIcon(MaterialDesignIconic.Icon.gmi_plus))
+            setMainFabOpenedDrawable(iconHandler.getFabIcon(MaterialDesignIconic.Icon.gmi_close))
 
-        // setup fabs
-        fabConfig.left.forEach {
-            addFab(true, it)
-        }
-        fabConfig.right.forEach {
-            addFab(false, it)
-        }
+            val fabItems = (getLeftFabs() + getRightFabs()).map {
+                SpeedDialActionItem.Builder(it.id, iconHandler.getFabIcon(it.icon))
+                        .setLabel(it.description)
+                        .create()
+            }
+            addAllActionItems(fabItems)
 
-        updateFabVisibility(View.VISIBLE)
-    }
-
-    private fun addFab(isLeft: Boolean, fab: FabConfig.Fab) {
-        val inflater = LayoutInflater.from(context)
-
-        @Suppress("CAST_NEVER_SUCCEEDS")
-        val fabView: FloatingActionButton = inflater.inflate(R.layout.view_fab,
-                recyclerView.parent as ViewGroup, false) as FloatingActionButton
-
-        // icon
-        fabView.setImageDrawable(iconHandler.getFabIcon(fab.icon))
-        // fab color
-        fab.color?.let {
-            fabView.backgroundTintList = ContextCompat.getColorStateList(context as Context, it)
-        }
-
-        // behaviour
-        val params = CoordinatorLayout.LayoutParams(fabView.layoutParams)
-                .apply {
-                    behavior = ScrollAwareFABBehavior()
-                    gravity = Gravity.BOTTOM or (if (isLeft) Gravity.START else Gravity.END)
-                    setMargins(16.dpToPx())
+            setOnActionSelectedListener { actionItem ->
+                val fabConfig = (getRightFabs() + getLeftFabs()).find { it.id == actionItem.id }
+                if (fabConfig != null) {
+                    fabConfig.onClick?.invoke()
+                    // close the speed dial
+                    false
+                } else {
+                    // keep the speed dial open
+                    true
                 }
-        fabView.layoutParams = params
-
-        // listeners
-        RxView
-                .clicks(fabView)
-                .bindToLifecycle(fabView)
-                .subscribe {
-                    // execute defined action if it exists
-                    val clickAction = fab.onClick
-                    if (clickAction != null) {
-                        clickAction()
-                    } else {
-                        Toast.makeText(context as Context, getString(fab.description), Toast.LENGTH_LONG).show()
-                    }
-                }
-
-        RxView
-                .longClicks(fabView)
-                .bindToLifecycle(fabView)
-                .subscribe {
-                    // execute defined action if it exists
-                    val longClickAction = fab.onLongClick
-                    if (longClickAction != null) {
-                        longClickAction()
-                    } else {
-                        Toast.makeText(context as Context, getString(fab.description), Toast.LENGTH_LONG).show()
-                    }
-                }
-
-        fabButtonViews.add(fabView)
-        val parent = recyclerView.parent as ViewGroup
-        parent.addView(fabView)
-    }
-
-    /**
-     * Show/Hide Floating Action Buttons
-     */
-    internal fun updateFabVisibility(visible: Int) {
-        if (visible == View.VISIBLE) {
-            fabButtonViews
-                    .forEach {
-                        it
-                                .visibility = View
-                                .VISIBLE
-                    }
-        } else {
-            fabButtonViews
-                    .forEach {
-                        it
-                                .visibility = View
-                                .INVISIBLE
-                    }
+            }
         }
     }
 

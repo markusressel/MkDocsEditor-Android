@@ -10,42 +10,58 @@
       "properties": [
         {
           "id": "1:5077343992198129219",
-          "name": "entityId"
+          "name": "entityId",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:7847689444581009015",
-          "name": "type"
+          "name": "type",
+          "type": 9
         },
         {
           "id": "3:2877497329939872470",
+          "name": "id",
           "indexId": "6:9098769772210087060",
-          "name": "id"
+          "type": 9,
+          "flags": 2080
         },
         {
           "id": "4:3731762822921679653",
-          "name": "name"
+          "name": "name",
+          "type": 9
         },
         {
           "id": "5:6896572699860369712",
-          "name": "filesize"
+          "name": "filesize",
+          "type": 6,
+          "flags": 4
         },
         {
           "id": "6:682055277767430250",
-          "name": "modtime"
+          "name": "modtime",
+          "type": 10
         },
         {
           "id": "7:7420037756201964866",
+          "name": "parentSectionId",
           "indexId": "1:7990348667738896496",
-          "name": "parentSectionId"
+          "type": 11,
+          "flags": 1548,
+          "relationTarget": "SectionEntity"
         },
         {
           "id": "8:1739713704597877584",
-          "name": "url"
+          "name": "url",
+          "type": 9
         },
         {
           "id": "9:1610102418278484175",
+          "name": "contentId",
           "indexId": "7:5786982190605967800",
-          "name": "contentId"
+          "type": 11,
+          "flags": 1548,
+          "relationTarget": "DocumentContentEntity"
         }
       ],
       "relations": []
@@ -57,33 +73,45 @@
       "properties": [
         {
           "id": "1:5353900599577848829",
-          "name": "entityId"
+          "name": "entityId",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:541535185983359302",
-          "name": "type"
+          "name": "type",
+          "type": 9
         },
         {
           "id": "3:3321631135779936723",
+          "name": "id",
           "indexId": "5:4759547512337368257",
-          "name": "id"
+          "type": 9,
+          "flags": 2080
         },
         {
           "id": "4:9076953536011419007",
-          "name": "name"
+          "name": "name",
+          "type": 9
         },
         {
           "id": "5:4807809307958319444",
-          "name": "filesize"
+          "name": "filesize",
+          "type": 6,
+          "flags": 4
         },
         {
           "id": "6:6856905628506227446",
-          "name": "modtime"
+          "name": "modtime",
+          "type": 10
         },
         {
           "id": "7:4214694157379714336",
+          "name": "parentSectionId",
           "indexId": "2:7773549802821406266",
-          "name": "parentSectionId"
+          "type": 11,
+          "flags": 1548,
+          "relationTarget": "SectionEntity"
         }
       ],
       "relations": []
@@ -95,21 +123,26 @@
       "properties": [
         {
           "id": "1:2892506229152489829",
-          "name": "entityId"
+          "name": "entityId",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:6670502710821369689",
-          "name": "id"
+          "name": "id",
+          "type": 9
         },
         {
           "id": "3:3447371683769506443",
-          "name": "name"
+          "name": "name",
+          "type": 9
         }
       ],
       "relations": [
         {
           "id": "1:6603448843579803239",
-          "name": "subsections"
+          "name": "subsections",
+          "targetId": "3:235719595631472099"
         }
       ]
     },
@@ -120,40 +153,57 @@
       "properties": [
         {
           "id": "1:4010330864444557434",
-          "name": "entityId"
+          "name": "entityId",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:4451967370208148517",
-          "name": "documentId"
+          "name": "documentId",
+          "type": 9
         },
         {
           "id": "3:8030643017582213184",
-          "name": "text"
+          "name": "text",
+          "type": 9
         },
         {
           "id": "4:9214835000721331869",
+          "name": "documentEntityId",
           "indexId": "4:1862623307980537823",
-          "name": "documentEntityId"
+          "type": 11,
+          "flags": 1548,
+          "relationTarget": "DocumentEntity"
         },
         {
           "id": "5:3855238911964327630",
-          "name": "zoomLevel"
+          "name": "zoomLevel",
+          "type": 7,
+          "flags": 4
         },
         {
           "id": "6:6797550487402286039",
-          "name": "panX"
+          "name": "panX",
+          "type": 7,
+          "flags": 4
         },
         {
           "id": "7:7940162275998274710",
-          "name": "panY"
+          "name": "panY",
+          "type": 7,
+          "flags": 4
         },
         {
           "id": "8:5804734994323400310",
-          "name": "selection"
+          "name": "selection",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "9:6831743925540741243",
-          "name": "date"
+          "name": "date",
+          "type": 6,
+          "flags": 4
         }
       ],
       "relations": []
@@ -163,8 +213,8 @@
   "lastIndexId": "7:5786982190605967800",
   "lastRelationId": "5:6680787238725584468",
   "lastSequenceId": "0:0",
-  "modelVersion": 4,
-  "modelVersionParserMinimum": 4,
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [
     7384408086141472050

@@ -13,20 +13,16 @@ abstract class StateActivityBase : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
-            stateBundle
-                    .putAll(savedInstanceState.getBundle(KEY_BUNDLE))
+            stateBundle.putAll(savedInstanceState.getBundle(KEY_BUNDLE))
         }
 
-        super
-                .onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState
-                .putBundle(KEY_BUNDLE, stateBundle)
+        outState.putBundle(KEY_BUNDLE, stateBundle)
 
-        super
-                .onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
     }
 
     /**

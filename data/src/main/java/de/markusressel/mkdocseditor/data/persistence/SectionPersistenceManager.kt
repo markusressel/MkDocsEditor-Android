@@ -14,6 +14,13 @@ class SectionPersistenceManager @Inject constructor(
 ) : PersistenceManagerBase<SectionEntity>(SectionEntity::class) {
 
     /**
+     * Get the root section
+     */
+    fun getRootSection(): SectionEntity? {
+        return findById("root")
+    }
+
+    /**
      * Find a section by it's document id (not the database entity id)
      */
     fun findById(sectionId: String): SectionEntity? {

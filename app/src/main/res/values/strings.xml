@@ -21,5 +21,13 @@
     <string name="connect">Connect</string>
 
     <string name="add">Add</string>
+    <string name="speed_dial_create_document">Create a document</string>
+    <string name="speed_dial_create_section">Create a section</string>
+
+    <string name="hint_new_section">New Section</string>
+    <string name="error_section_already_exists">Section already exists!</string>
+
+    <string name="hint_new_document">New Document</string>
+    <string name="error_document_already_exists">Document already exists!</string>
 
 </resources>

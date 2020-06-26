@@ -17,19 +17,16 @@ open class PersistenceManagerBase<EntityType : Any>(val entityType: KClass<Entit
     protected lateinit var boxStore: BoxStore
 
     private val box: Box<EntityType> by lazy {
-        boxStore
-                .boxFor(entityType)
+        boxStore.boxFor(entityType)
     }
 
     /**
      * Get the model id for this entity type (same for all entities of equal class type without dependency on the class name)
      */
     fun getEntityModelId(): Int {
-        val entityClass: Class<EntityType> = entityType
-                .java
+        val entityClass: Class<EntityType> = entityType.java
 
-        return boxStore
-                .getEntityTypeIdOrThrow(entityClass)
+        return boxStore.getEntityTypeIdOrThrow(entityClass)
     }
 
     /**
@@ -43,10 +40,8 @@ open class PersistenceManagerBase<EntityType : Any>(val entityType: KClass<Entit
      * Removes database files entirely
      */
     fun clearData() {
-        boxStore
-                .close()
-        boxStore
-                .deleteAllFiles()
+        boxStore.close()
+        boxStore.deleteAllFiles()
     }
 
 }

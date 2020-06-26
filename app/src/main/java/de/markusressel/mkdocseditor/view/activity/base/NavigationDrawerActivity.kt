@@ -1,8 +1,13 @@
 package de.markusressel.mkdocseditor.view.activity.base
 
+import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.get
 import androidx.navigation.Navigation
@@ -11,13 +16,13 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.eightbitlab.rxbus.Bus
 import com.eightbitlab.rxbus.registerInBus
 import com.github.ajalt.timberkt.Timber
-import com.mikepenz.materialdrawer.AccountHeader
-import com.mikepenz.materialdrawer.AccountHeaderBuilder
-import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.R.string.material_drawer_close
+import com.mikepenz.materialdrawer.R.string.material_drawer_open
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener
 import com.mikepenz.materialdrawer.model.*
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.model.interfaces.*
+import com.mikepenz.materialdrawer.widget.AccountHeaderView
+import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
 import de.markusressel.mkdocseditor.R
 import de.markusressel.mkdocseditor.event.ThemeChangedEvent
 import de.markusressel.mkdocseditor.extensions.common.android.isTablet
@@ -39,73 +44,41 @@ import javax.inject.Inject
  *
  * Created by Markus on 07.01.2018.
  */
-abstract class NavigationDrawerActivity : DaggerSupportActivityBase() {
+abstract class NavigationDrawerActivity : SupportActivityBase() {
 
     override val layoutRes: Int
         get() = R.layout.activity_main
 
     protected val navController by lazy { Navigation.findNavController(this, R.id.navHostFragment) }
 
-    private lateinit var navigationDrawer: Drawer
-
     @Inject
     protected lateinit var offlineModeManager: OfflineModeManager
+
+    private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val menuItemList = initDrawerMenuItems()
-        val accountHeader = initAccountHeader()
+        slider.itemAdapter.add(menuItemList)
+        initAccountHeader(slider)
 
-        val builder = DrawerBuilder()
-                .withActivity(this)
-                .withAccountHeader(accountHeader)
-                .withDrawerItems(menuItemList)
-                .withCloseOnClick(false)
-                .withToolbar(toolbar)
-                .withSavedInstance(savedInstanceState)
-
-        if (isTablet()) {
-            navigationDrawer = builder
-                    .buildView()
-
-            drawerLayoutParent
-                    .visibility = View
-                    .VISIBLE
-            drawerDividerView
-                    .visibility = View
-                    .VISIBLE
-
-            drawerLayoutParent
-                    .addView(navigationDrawer.slider, 0)
-        } else {
-            drawerLayoutParent
-                    .visibility = View
-                    .GONE
-            drawerDividerView
-                    .visibility = View
-                    .GONE
-
-            navigationDrawer = builder
-                    .build()
-        }
-
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, material_drawer_open, material_drawer_close)
         val appBarConfiguration = AppBarConfiguration(
                 navGraph = navController.graph,
-                drawerLayout = navigationDrawer.drawerLayout)
+                drawerLayout = drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             // update selected drawer item accordingly
             DrawerItemHolder.fromId(destination.id)?.let {
-                navigationDrawer.setSelection(it.id.toLong(), false)
+                slider.setSelection(it.id.toLong(), false)
             }
         }
     }
 
     override fun onStart() {
-        super
-                .onStart()
+        super.onStart()
 
         Bus.observe<ThemeChangedEvent>()
                 .subscribe {
@@ -114,69 +87,90 @@ abstract class NavigationDrawerActivity : DaggerSupportActivityBase() {
                 .registerInBus(this)
     }
 
-    private fun initAccountHeader(): AccountHeader {
-        val profiles: MutableList<IProfile<*>> = getProfiles()
-
-        return AccountHeaderBuilder()
-                .withActivity(this)
-                //                .withProfiles(profiles)
-                //                .withCloseDrawerOnProfileListClick(false)
-                //                .withCurrentProfileHiddenInList(true)
-                //                .withHeaderBackground()
-                .withDividerBelowHeader(true)
-                .withOnAccountHeaderListener { _, profile, current ->
-                    Timber
-                            .d { "Pressed profile: '$profile' with current: '$current'" }
-                    false
-                }
-
-                .build()
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        actionBarDrawerToggle.onConfigurationChanged(newConfig)
     }
 
-    private fun getProfiles(): MutableList<IProfile<*>> {
-        val profiles: MutableList<IProfile<*>> = LinkedList()
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        actionBarDrawerToggle.syncState()
+    }
 
-        profiles.add(ProfileDrawerItem()
-                .withName("Markus Ressel")
-                .withEmail("mail@markusressel.de")
-                .withIcon(R.mipmap.ic_launcher))
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return actionBarDrawerToggle.onOptionsItemSelected(item)
+    }
 
-        profiles.add(ProfileDrawerItem()
-                .withName("Max Mustermann")
-                .withEmail("")
-                .withIcon(R.mipmap.ic_launcher))
+    private fun initAccountHeader(slider: MaterialDrawerSliderView): AccountHeaderView {
+        val profiles: MutableList<IProfile> = getProfiles()
+
+        AccountHeaderView(this).apply {
+            attachToSliderView(slider) // attach to the slider
+            addProfiles(*profiles.toTypedArray())
+            onAccountHeaderListener = { view, profile, current ->
+                // react to profile changes
+                false
+            }
+//            withSavedInstance(savedInstanceState)
+        }
+
+
+        return AccountHeaderView(this).apply {
+            this.profiles = profiles
+            dividerBelowHeader = true
+            onAccountHeaderListener = { view: View?, profile: IProfile, current: Boolean ->
+                Timber.d { "Pressed profile: '$profile' with current: '$current'" }
+                false
+            }
+        }
+    }
+
+    private fun getProfiles(): MutableList<IProfile> {
+        val profiles: MutableList<IProfile> = LinkedList()
+
+        profiles.add(ProfileDrawerItem().apply {
+            nameText = "Markus Ressel"
+            descriptionText = "mail@markusressel.de"
+            iconRes = R.mipmap.ic_launcher
+        })
+
+        profiles.add(ProfileDrawerItem().apply {
+            nameText = "Max Mustermann"
+            descriptionText = ""
+            iconRes = R.mipmap.ic_launcher
+        })
 
         return profiles
     }
 
-    private fun initDrawerMenuItems(): MutableList<IDrawerItem<*, *>> {
-        val menuItemList: MutableList<IDrawerItem<*, *>> = LinkedList()
+    private fun initDrawerMenuItems(): MutableList<IDrawerItem<*>> {
+        val menuItemList: MutableList<IDrawerItem<*>> = LinkedList()
 
-        val clickListener = Drawer
-                .OnDrawerItemClickListener { _, _, drawerItem ->
-                    val drawerMenuItem = DrawerItemHolder
-                            .fromId(drawerItem.identifier.toInt())
+        val clickListener = { view: View?, drawerItem: IDrawerItem<*>, i: Int ->
+            var consume = false
+            val drawerMenuItem = DrawerItemHolder.fromId(
+                    drawerItem.identifier.toInt())
 
-                    drawerMenuItem?.let {
-                        if (it.id == R.id.none) {
-                            return@let
-                        }
-
-                        navController.navigate(it.id)
-
-                        if (drawerItem.isSelectable) {
-                            // set new title
-                            setTitle(drawerMenuItem.title)
-                        }
-
-                        if (!isTablet()) {
-                            navigationDrawer.closeDrawer()
-                        }
-                        return@OnDrawerItemClickListener true
-                    }
-
-                    false
+            drawerMenuItem?.let {
+                if (it.id == R.id.none) {
+                    return@let
                 }
+
+                navController.navigate(it.id)
+
+                if (drawerItem.isSelectable) {
+                    // set new title
+                    setTitle(drawerMenuItem.title)
+                }
+
+                if (!isTablet()) {
+                    drawerLayout.closeDrawer(slider)
+                }
+                consume = true
+            }
+
+            consume
+        }
 
         menuItemList.addAll(
                 arrayOf(
@@ -191,49 +185,52 @@ abstract class NavigationDrawerActivity : DaggerSupportActivityBase() {
         return menuItemList
     }
 
-    private fun createPrimaryMenuItem(menuItem: DrawerMenuItem, clickListener: Drawer.OnDrawerItemClickListener): PrimaryDrawerItem {
-        return PrimaryDrawerItem()
-                .withName(menuItem.title)
-                .withIdentifier(menuItem.id.toLong())
-                .withIcon(menuItem.getIcon(iconHandler))
-                .withSelectable(menuItem.selectable)
-                .withOnDrawerItemClickListener(clickListener)
+    private fun createPrimaryMenuItem(menuItem: DrawerMenuItem, clickListener: ((v: View?, item: IDrawerItem<*>, position: Int) -> Boolean)?): PrimaryDrawerItem {
+        return PrimaryDrawerItem().apply {
+            nameRes = menuItem.title
+            identifier = menuItem.id.toLong()
+            iconDrawable = menuItem.getIcon(iconHandler)
+            isSelectable = menuItem.selectable
+            onDrawerItemClickListener = clickListener
+        }
     }
 
-    private fun createSecondaryMenuItem(menuItem: DrawerMenuItem, clickListener: Drawer.OnDrawerItemClickListener): SecondaryDrawerItem {
-        return SecondaryDrawerItem()
-                .withName(menuItem.title)
-                .withIdentifier(menuItem.id.toLong())
-                .withIcon(menuItem.getIcon(iconHandler))
-                .withSelectable(menuItem.selectable)
-                .withOnDrawerItemClickListener(clickListener)
+    private fun createSecondaryMenuItem(menuItem: DrawerMenuItem, clickListener: ((v: View?, item: IDrawerItem<*>, position: Int) -> Boolean)?): SecondaryDrawerItem {
+        return SecondaryDrawerItem().apply {
+            nameRes = menuItem.title
+            identifier = menuItem.id.toLong()
+            iconDrawable = menuItem.getIcon(iconHandler)
+            isSelectable = menuItem.selectable
+            onDrawerItemClickListener = clickListener
+        }
     }
 
-    private fun createOfflineModeMenuItem(menuItem: DrawerMenuItem, clickListener: Drawer.OnDrawerItemClickListener, defaultValue: Boolean = false): IDrawerItem<*, *> {
-        return SwitchDrawerItem()
-                .withName(menuItem.title)
-                .withIdentifier(menuItem.id.toLong())
-                .withIcon(menuItem.getIcon(iconHandler))
-                .withSelectable(menuItem.selectable)
-                .withOnDrawerItemClickListener(clickListener)
-                .withOnCheckedChangeListener { drawerItem, buttonView, isChecked ->
-                    offlineModeManager.setEnabled(isChecked)
+    private fun createOfflineModeMenuItem(menuItem: DrawerMenuItem, clickListener: ((v: View?, item: IDrawerItem<*>, position: Int) -> Boolean)?, defaultValue: Boolean = false): IDrawerItem<*> {
 
-                    val parentView = buttonView.parent as ViewGroup
-                    val iconView = parentView[0] as AppCompatImageView
+        val onCheckedChangeListener = object : OnCheckedChangeListener {
+            override fun onCheckedChanged(drawerItem: IDrawerItem<*>, buttonView: CompoundButton, isChecked: Boolean) {
+                offlineModeManager.setEnabled(isChecked)
+                val parentView = buttonView.parent as ViewGroup
+                val iconView = parentView[0] as AppCompatImageView
+                iconView.setColorFilter(offlineModeManager.getColor())
+            }
+        }
 
-                    iconView.setColorFilter(offlineModeManager.getColor())
-                }.withChecked(defaultValue)
-                .withIconColor(offlineModeManager.getColor())
-                .withPostOnBindViewListener { drawerItem, view ->
-                    val iconView = (view as ViewGroup)[0] as AppCompatImageView
-                    iconView.setColorFilter(offlineModeManager.getColor())
-                }
+        return SwitchDrawerItem().apply {
+            nameRes = menuItem.title
+            identifier = menuItem.id.toLong()
+            iconDrawable = menuItem.getIcon(iconHandler)
+            isSelectable = menuItem.selectable
+            onDrawerItemClickListener = clickListener
+            this.onCheckedChangeListener = onCheckedChangeListener
+            isChecked = defaultValue
+            iconColor = ColorStateList.valueOf(offlineModeManager.getColor())
+        }
     }
 
     override fun onBackPressed() {
-        if (navigationDrawer.isDrawerOpen) {
-            navigationDrawer.closeDrawer()
+        if (drawerLayout.isDrawerOpen(slider)) {
+            drawerLayout.closeDrawer(slider)
             return
         }
 
@@ -241,15 +238,11 @@ abstract class NavigationDrawerActivity : DaggerSupportActivityBase() {
         val navHost = supportFragmentManager.findFragmentById(R.id.navHostFragment)
         val currentlyVisibleFragment = navHost?.childFragmentManager?.primaryNavigationFragment
         when (currentlyVisibleFragment) {
-            is PreferencesFragment -> {
-                if (currentlyVisibleFragment.onBackPressed()) {
-                    return
-                }
+            is PreferencesFragment -> if (currentlyVisibleFragment.onBackPressed()) {
+                return
             }
-            is FileBrowserFragment -> {
-                if (currentlyVisibleFragment.onBackPressed()) {
-                    return
-                }
+            is FileBrowserFragment -> if (currentlyVisibleFragment.onBackPressed()) {
+                return
             }
         }
 

@@ -2,14 +2,15 @@ package de.markusressel.mkdocseditor.view.fragment.preferences.base
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
-import android.view.View
 import com.trello.rxlifecycle2.LifecycleProvider
 import com.trello.rxlifecycle2.LifecycleTransformer
 import com.trello.rxlifecycle2.RxLifecycle
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.trello.rxlifecycle2.android.RxLifecycleAndroid
+import de.markusressel.kutepreferences.core.view.KutePreferencesMainFragment
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 
@@ -17,7 +18,7 @@ import io.reactivex.subjects.BehaviorSubject
 /**
  * Created by Markus on 16.02.2018.
  */
-abstract class LifecyclePreferenceFragmentBase : DaggerKutePreferenceFragmentBase(), LifecycleProvider<FragmentEvent> {
+abstract class LifecyclePreferenceFragmentBase : KutePreferencesMainFragment(), LifecycleProvider<FragmentEvent> {
 
     private val lifecycleSubject: BehaviorSubject<FragmentEvent> = BehaviorSubject
             .create()

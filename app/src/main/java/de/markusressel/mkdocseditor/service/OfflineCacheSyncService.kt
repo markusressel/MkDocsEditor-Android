@@ -1,9 +1,10 @@
 package de.markusressel.mkdocseditor.service
 
 import android.app.job.JobParameters
+import android.app.job.JobService
 import android.os.Handler
 import com.github.ajalt.timberkt.Timber
-import de.markusressel.mkdocseditor.dagger.DaggerJobService
+import dagger.hilt.android.AndroidEntryPoint
 import de.markusressel.mkdocseditor.data.persistence.DocumentContentPersistenceManager
 import de.markusressel.mkdocsrestclient.MkDocsRestClient
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,7 +17,8 @@ import javax.inject.Inject
  * ultimately land on this service's "onStartJob" method. It runs jobs for a specific amount of time
  * and finishes them. It keeps the activity updated with changes via a Messenger.
  */
-class OfflineCacheSyncService : DaggerJobService() {
+@AndroidEntryPoint
+class OfflineCacheSyncService : JobService() {
 
     @Inject
     internal lateinit var restClient: MkDocsRestClient

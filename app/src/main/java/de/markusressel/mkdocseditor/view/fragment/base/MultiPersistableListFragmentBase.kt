@@ -28,7 +28,7 @@ import androidx.lifecycle.Lifecycle
 import com.github.ajalt.timberkt.Timber
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
-import com.mikepenz.material_design_iconic_typeface_library.MaterialDesignIconic
+import com.mikepenz.iconics.typeface.library.materialdesigniconic.MaterialDesignIconic
 import com.trello.rxlifecycle2.android.lifecycle.kotlin.bindUntilEvent
 import de.markusressel.commons.android.material.snack
 import de.markusressel.mkdocseditor.R
@@ -48,7 +48,7 @@ import javax.inject.Inject
 /**
  * Created by Markus on 29.01.2018.
  */
-abstract class MultiPersistableListFragmentBase : NewListFragmentBase() {
+abstract class MultiPersistableListFragmentBase : ListFragmentBase() {
 
     @Inject
     lateinit var restClient: MkDocsRestClient
@@ -56,22 +56,17 @@ abstract class MultiPersistableListFragmentBase : NewListFragmentBase() {
     private var serverUnavailableSnackbar: Snackbar? = null
 
     private val optionsMenuComponent: OptionsMenuComponent by lazy {
-        OptionsMenuComponent(hostFragment = this, optionsMenuRes = R.menu.options_menu_list, onCreateOptionsMenu = { menu: Menu?, menuInflater: MenuInflater? ->
-            val refreshMenuItem = menu
-                    ?.findItem(R.id.refresh)
-            refreshMenuItem
-                    ?.icon = iconHandler
-                    .getOptionsMenuIcon(MaterialDesignIconic.Icon.gmi_refresh)
+        OptionsMenuComponent(hostFragment = this,
+                optionsMenuRes = R.menu.options_menu_list,
+                onCreateOptionsMenu = { menu: Menu?, menuInflater: MenuInflater? ->
+                    val refreshMenuItem = menu?.findItem(R.id.refresh)
+                    refreshMenuItem?.icon = iconHandler.getOptionsMenuIcon(MaterialDesignIconic.Icon.gmi_refresh)
 
-            val searchMenuItem = menu
-                    ?.findItem(R.id.search)
-            searchMenuItem
-                    ?.icon = iconHandler
-                    .getOptionsMenuIcon(MaterialDesignIconic.Icon.gmi_search)
+                    val searchMenuItem = menu?.findItem(R.id.search)
+                    searchMenuItem?.icon = iconHandler.getOptionsMenuIcon(MaterialDesignIconic.Icon.gmi_search)
 
-            val searchView = searchMenuItem?.actionView as SearchView?
-            searchView
-                    ?.let {
+                    val searchView = searchMenuItem?.actionView as SearchView?
+                    searchView?.let {
                         RxSearchView
                                 .queryTextChanges(it)
                                 .skipInitialValue()
@@ -88,7 +83,7 @@ abstract class MultiPersistableListFragmentBase : NewListFragmentBase() {
                                 })
                     }
 
-        }, onOptionsMenuItemClicked = {
+                }, onOptionsMenuItemClicked = {
             when {
                 it.itemId == R.id.refresh -> {
                     reload()
@@ -116,6 +111,9 @@ abstract class MultiPersistableListFragmentBase : NewListFragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // TODO: this should only be done if the viewmodel is not already initialized
+        //  as this resets the current position of the filebrowser, as well as any existing
+        //  search term
         reload()
     }
 
@@ -180,6 +178,8 @@ abstract class MultiPersistableListFragmentBase : NewListFragmentBase() {
     abstract fun mapToEntity(it: Any): IdentifiableListItem
 
     /**
+
+
      * Persist the current list data
      */
     internal abstract fun persistListData(data: IdentifiableListItem)
